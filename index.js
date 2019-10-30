@@ -35,11 +35,11 @@ client.on('message', message => {
     const command = args.shift().toLowerCase();
 
     if (command === 'd'){
-        if(Number.isInteger(args[0]) === true){
+        if(Number.isInteger(parseInt(args[0])) === true){
             const rand = Math.floor((Math.random()) * args[0] + 1)
             message.channel.send(`Your roll out of ${args[0]}... ${rand}
             ${numMessage(args[0], rand)}`)
-        }else if(Number.isInteger(args[0]) === false){
+        }else if(Number.isInteger(parseInt(args[0])) === false){
             message.channel.send(`${args[0]} is not a number`)
         }
             
