@@ -18,7 +18,7 @@ function numMessage(args, rand){
     }
 
 }
-function fetchPoke(args){
+function fetchPoke(message, args){
     fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
         .then(res => res.json())
         .then(pokemon => {
@@ -35,11 +35,12 @@ client.on('message', message => {
     const command = args.shift().toLowerCase();
 
     if (command === 'd'){
-        if(Number.isInteger(parseInt(args[0])) === true){
+        if(args[0]%1==0 === true){
             const rand = Math.floor((Math.random()) * args[0] + 1)
             message.channel.send(`Your roll out of ${args[0]}... ${rand}
-            ${numMessage(args, rand)}`)
-        }else if(Number.isInteger(parseInt(args[0])) === false){
+            ${numMessage(args[0], rand)}`)
+            console.log(args[0])
+        }else if(args[0]%1==0 === false){
             message.channel.send(`${args[0]} is not a number`)
         }
             
@@ -48,13 +49,14 @@ client.on('message', message => {
         if (!args.length) {
             return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
         }else{
-            fetchPoke(args)
+            fetchPoke(message, args)
 
         }
     }
     
 
 })
+
 
 
 client.login(process.env.BOT_TOKEN)
