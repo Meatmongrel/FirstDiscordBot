@@ -20,12 +20,12 @@ function numMessage(number, rand){
 }
 
 client.on('message', message => {
-    // if (!message.content.startsWith(prefix) || message.author.bot) return;
+
 
     const args = message.content.slice(prefix.length).split(' ');
     const command = args.shift().toLowerCase();
 
-    if (command === 'd '){
+    if (command === 'd'){
         const rand = Math.floor((Math.random()) * args[0] + 1)
         message.channel.send(`Your roll out of ${args[0]}... ${rand}
         ${numMessage(args[0], rand)}`)
@@ -50,4 +50,5 @@ client.on('message', message => {
 
 })
 
-client.login(process.env.BOT_TOKEN)
+client.login("NjM4NTYyOTU5NDM3ODU2NzY4.XbkkfQ.IOP-mcezO8ibVmux61GpHNAF-fk")
+// client.login(process.env.BOT_TOKEN)
