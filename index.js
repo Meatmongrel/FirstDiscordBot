@@ -24,23 +24,22 @@ client.on('message', message => {
     const args = message.content.slice(prefix.length).split(' ');
     const command = args.shift().toLowerCase();
 
-    const number = parseInt(message.content.substr(2))
-    if(Number.isInteger(number) === true){
-        if (command === `d `){
-            const rand = Math.floor((Math.random()) * number + 1)
-            message.channel.send(`Your roll out of ${number}... ${rand}
-            ${numMessage(number, rand)}`)
+    if (command === 'd '){
+        const rand = Math.floor((Math.random()) * args[0] + 1)
+        message.channel.send(`Your roll out of ${args[0]}... ${rand}
+        ${numMessage(args[0], rand)}`)
             
-        }
     }
     else if (command === `pokemon`) {
         if (!args.length) {
             return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
-        }
+        }else{
 
-        fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
-            .then(res => res.json())
-            .then(pokemon => {return message.channel.send(pokemon.sprites.front_default)})
+            fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
+                .then(res => res.json())
+                .then(pokemon => {return message.channel.send(pokemon.sprites.front_default)})
+                .catch(console.error)
+        }
     }
     
 
