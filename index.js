@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 const client = new Discord.Client
-const config = require('./config.json')
+const { prefix } = require('./config.json')
 
 
 function numMessage(number, rand){
@@ -18,22 +18,29 @@ function numMessage(number, rand){
 
 }
 
-client.once('ready', () => {
-    console.log('Ready!');
-})
-
 client.on('message', message => {
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).split(' ');
+    const command = args.shift().toLowerCase();
+
     const number = parseInt(message.content.substr(2))
     if(Number.isInteger(number) === true){
-        if (message.content.slice(0, 3) === `${config.prefix}d `){
+        if (command === `d `){
             const rand = Math.floor((Math.random()) * number + 1)
             message.channel.send(`Your roll out of ${number}... ${rand}
             ${numMessage(number, rand)}`)
             
         }
     }
-    else if (message.content === `${config.prefix}server`) {
-        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\nServer Creation: ${message.guild.createdAt}\nRole objects: ${message.guild.roles.forEach(role => {role.name})}`);
+    else if (command === `pokemon`) {
+        if (!args.length) {
+            return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+        }
+
+        fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
+            .then(res => res.json())
+            .then(pokemon => {return message.channel.send(pokemon.sprites.front_default)})
     }
     
 
