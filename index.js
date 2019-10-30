@@ -1,5 +1,5 @@
-const Discord = require('discord.js')
-const client = new Discord.Client
+const { MessageEmbed, Client } = require('discord.js')
+const client = new Client
 const { prefix } = require('./config.json')
 const fetch = require('node-fetch')
 
@@ -18,16 +18,18 @@ function numMessage(args, rand){
     }
 
 }
+
 function fetchPoke(message, args){
     fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
         .then(res => res.json())
         .then(pokemon => {
-            const poke = new Discord.MessageEmbed()
+            const poke = new MessageEmbed()
                 .setTitle(pokemon.name)
                 .setImage(pokemon.sprites.front_default)
             message.channel.send(poke)
     })
 }
+
 client.on('message', message => {
 
 
@@ -38,7 +40,7 @@ client.on('message', message => {
         if(args[0]%1==0 === true){
             const rand = Math.floor((Math.random()) * args[0] + 1)
             message.channel.send(`Your roll out of ${args[0]}... ${rand}
-            ${numMessage(args[0], rand)}`)
+            ${numMessage(args, rand)}`)
             console.log(args[0])
         }else if(args[0]%1==0 === false){
             message.channel.send(`${args[0]} is not a number`)
@@ -56,7 +58,4 @@ client.on('message', message => {
     
 
 })
-
-
-
 client.login(process.env.BOT_TOKEN)
