@@ -18,7 +18,16 @@ function numMessage(number, rand){
     }
 
 }
-
+function fetchPoke(args){
+    fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
+        .then(res => res.json())
+        .then(pokemon => {
+            const poke = new Discord.MessageEmbed()
+                .setTitle(pokemon.name)
+                .setImage(pokemon.sprites.front_default)
+            message.channel.send(poke)
+    })
+}
 client.on('message', message => {
 
 
@@ -35,15 +44,8 @@ client.on('message', message => {
         if (!args.length) {
             return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
         }else{
+            fetchPoke(args)
 
-            fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
-                .then(res => res.json())
-                .then(pokemon => {
-                    const poke = new Discord.MessageEmbed()
-                        .setTitle(pokemon.name)
-                        .setImage(pokemon.sprites.front_default)
-                    message.channel.send(poke)
-                })
         }
     }
     
