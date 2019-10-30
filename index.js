@@ -13,7 +13,7 @@ function numMessage(args, rand){
         return ("Pretty decent, alright.")
     }else if(rand <= args[0] * 0.99){
         return ("Oh shit now we talkin'")
-    }else if(rand === args[0]){
+    }else{
         return ("OHHHH WOMBO COMBOOOOOO OH MY GOD")
     }
 
