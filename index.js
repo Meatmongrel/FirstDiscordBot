@@ -4,16 +4,16 @@ const { prefix } = require('./config.json')
 const fetch = require('node-fetch')
 
 
-function numMessage(number, rand){
-    if (rand <= number * 0.25){
+function numMessage(args, rand){
+    if (rand <= args[0] * 0.25){
         return ("Ouch, sucks for you!")
-    }else if(rand <= number * 0.5){
+    }else if(rand <= args[0] * 0.5){
         return ("Das ight...")
-    }else if(rand <= number * 0.75){
+    }else if(rand <= args[0] * 0.75){
         return ("Pretty decent, alright.")
-    }else if(rand <= number * 0.99){
+    }else if(rand <= args[0] * 0.99){
         return ("Oh shit now we talkin'")
-    }else if(rand === number){
+    }else if(rand === args[0]){
         return ("OHHHH WOMBO COMBOOOOOO OH MY GOD")
     }
 
