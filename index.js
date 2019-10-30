@@ -37,8 +37,12 @@ client.on('message', message => {
 
             fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
                 .then(res => res.json())
-                .then(pokemon => {return message.channel.send(pokemon.sprites.front_default)})
-                .catch(console.error)
+                .then(pokemon => {
+                    const poke = new Discord.MessageEmbed()
+                        .setTitle(pokemon.name)
+                        .setImage(pokemon.sprites.front_default)
+                    message.channel.send(poke)
+                })
         }
     }
     
