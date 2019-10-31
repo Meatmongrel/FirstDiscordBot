@@ -27,7 +27,19 @@ function fetchPoke(message, args){
                 .setTitle(pokemon.name)
                 .setImage(pokemon.sprites.front_default)
             message.channel.send(poke)
-    })
+        })
+}
+
+function fetchRandomPoke(message){
+    const num = Math.floor(Math.random() * 808 + 1)
+    fetch(`https://pokeapi.co/api/v2/pokemon/${num}`)
+        .then(res => res.json())
+        .then(pokemon => {
+            const poke = new RichEmbed()
+                .setTitle(pokemon.name)
+                .setImage(pokemon.sprites.front_default)
+            message.channel.send(poke)
+        })
 }
 
 client.on('message', message => {
@@ -50,7 +62,10 @@ client.on('message', message => {
     else if (command === `poke`) {
         if (!args.length) {
             return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
-        }else{
+        }else if(args[0] == 'random'){
+            fetchRandomPoke(message)
+        }
+        else{
             fetchPoke(message, args)
 
         }
