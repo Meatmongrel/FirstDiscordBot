@@ -1,4 +1,4 @@
-const { MessageEmbed, Client } = require('discord.js')
+const { RichEmbed, Client } = require('discord.js')
 const client = new Client
 const { prefix } = require('./config.json')
 const fetch = require('node-fetch')
@@ -23,7 +23,7 @@ function fetchPoke(message, args){
     fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
         .then(res => res.json())
         .then(pokemon => {
-            const poke = new Discord.RichEmbed()
+            const poke = new RichEmbed()
                 .setTitle(pokemon.name)
                 .setImage(pokemon.sprites.front_default)
             message.channel.send(poke)
