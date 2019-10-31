@@ -23,7 +23,7 @@ function fetchPoke(message, args){
     fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
         .then(res => res.json())
         .then(pokemon => {
-            const poke = new RichEmbed()
+            const poke = new Discord.RichEmbed()
                 .setTitle(pokemon.name)
                 .setImage(pokemon.sprites.front_default)
             message.channel.send(poke)
