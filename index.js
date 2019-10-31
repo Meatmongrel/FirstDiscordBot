@@ -81,6 +81,13 @@ client.on('message', message => {
 
         }
     }
+    else if(command === 'help'){
+        const helpMsg = new RichEmbed()
+            .setTitle("The prefix is - and current commands are:")
+            .addField("-d (num)", "Roll a die with (num) sides")
+            .addField("-poke (name) OR (random (num))", "Search a pokemon by name, or get (num) random pokemon, up to 5")
+        message.channel.send(helpMsg)
+    }
     
 
 })
