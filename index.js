@@ -20,7 +20,7 @@ function numMessage(args, rand){
 }
 
 function fetchPoke(message, args){
-    fetch(`https://pokeapi.co/api/v2/pokemon/${args[0]}`)
+    fetch(`https://pokeapi.co/api/v2/pokemon/${args[0].toLowerCase()}`)
         .then(res => res.json())
         .then(pokemon => {
             const poke = new RichEmbed()
@@ -40,6 +40,7 @@ function fetchRandomPoke(message){
                 .setImage(pokemon.sprites.front_default)
             message.channel.send(poke)
         })
+        console.log(num)
 }
 
 client.on('message', message => {
@@ -62,8 +63,18 @@ client.on('message', message => {
     else if (command === `poke`) {
         if (!args.length) {
             return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
-        }else if(args[0] == 'random'){
-            fetchRandomPoke(message)
+        }
+        else if(args[0] == 'random'){
+            if(args[1] <= 5){
+                for(var i=1; i <= args[1]; i++){
+                    (fetchRandomPoke(message))
+                }
+            }else if(!args[1]){
+                fetchRandomPoke(message)
+            }
+            else{
+                message.channel.send("You can only get 5 random pokemon at a time")
+            }
         }
         else{
             fetchPoke(message, args)
