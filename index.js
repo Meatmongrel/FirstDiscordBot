@@ -1,4 +1,4 @@
-const { RichEmbed, Client } = require('discord.js')
+const { RichEmbed, Client, GuildMember } = require('discord.js')
 const fs = require('fs')
 const client = new Client
 const fetch = require('node-fetch')
@@ -197,7 +197,7 @@ client.on('message', message => {
             helpCommand(message)
         }
         else if(command === "prefix"){
-            if(member.roles.some(role => role.name === "Robloxian") === true){
+            if(GuildMember.roles.some(role => role.name === "Robloxian") === true){
                 prefixCommand(message, args)
             }else{
                 message.reply("You do not have permission to use that command")
