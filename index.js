@@ -1,8 +1,6 @@
 const { RichEmbed, Client, Collection } = require('discord.js')
 const fs = require('fs')
 const client = new Client
-const fetch = require('node-fetch')
-const embedColor = "#5b3687"
 client.commands = new Collection()
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -47,9 +45,19 @@ client.on('message', message => {
             }else{
                 const currentPrefix = new RichEmbed()
                     .setTitle(`The current prefix is ${config.prefix}`)
+                    .setField("You cannot change the prefix", "You do not have the administrator permissions")
                 message.channe.send(currentPrefix)
+            }
+        }
+        else if(command === "watch"){
+            if(!args.length){
+                message.reply('Watch what?')
+            }
+            else if(args){
+                client.user.setActivity(`${args}`, { type: 'WATCHING' })
             }
         }
     }
 })
+
 client.login(process.env.BOT_TOKEN)
