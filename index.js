@@ -197,7 +197,7 @@ client.on('message', message => {
             helpCommand(message)
         }
         else if(command === "prefix"){
-            if(GuildMember.roles.some(role => role.name === "Robloxian") === true){
+            if(message.member.hasPermission("ADMINISTRATOR") === true){
                 prefixCommand(message, args)
             }else{
                 message.reply("You do not have permission to use that command")
