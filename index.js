@@ -54,10 +54,9 @@ client.on('message', message => {
                 message.reply('Watch what?')
             }
             else if(args){
-                client.user.setActivity(`${args}`, { type: 'WATCHING' })
+                client.user.setActivity(`${args.toString().replace(/,/g, ' ')}`, { type: 'WATCHING' })
             }
         }
     }
 })
-
 client.login(process.env.BOT_TOKEN)
