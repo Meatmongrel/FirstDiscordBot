@@ -1,7 +1,12 @@
 const { RichEmbed, Client, Collection } = require('discord.js')
 const fs = require('fs')
+const fetch = require('node-fetch')
+require('dotenv').config()
+
 const client = new Client
 client.commands = new Collection()
+
+const embedColor = "#5b3687"
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -19,6 +24,24 @@ fs.readFile('./config.json', (err, data) => {
 client.on("ready", () => {
     client.user.setActivity('yo messages', { type: 'WATCHING' })
 })
+
+const mapCommand = (message) => {
+        fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${process.env.MAPS_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                const mapMessage = new RichEmbed()
+                    .setTitle("map")
+                    .setImage(`https://maps.googleapis.com/maps/api/staticmap?center=${res.location.lat},${res.location.lng}&zoom=12&size=600x300&maptype=roadmap&key=${process.env.MAPS_KEY}`)
+                    .setColor(embedColor)
+                message.channel.send(mapMessage)
+    
+            })
+}
 
 client.on('message', message => {
     
@@ -56,6 +79,9 @@ client.on('message', message => {
             else if(args){
                 client.user.setActivity(`${args.toString().replace(/,/g, ' ')}`, { type: 'WATCHING' })
             }
+        }
+        else if(command === "map"){
+            mapCommand(message)
         }
     }
 })
