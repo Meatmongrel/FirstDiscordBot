@@ -1,7 +1,7 @@
 const { RichEmbed, Client, Collection } = require('discord.js')
 const fs = require('fs')
 const fetch = require('node-fetch')
-require('dotenv').config()
+
 
 const client = new Client
 client.commands = new Collection()
@@ -35,7 +35,6 @@ const mapCommand = (message) => {
             .then(res => res.json())
             .then(res => {
                 const mapMessage = new RichEmbed()
-                    .setTitle("map")
                     .setImage(`https://maps.googleapis.com/maps/api/staticmap?center=${res.location.lat},${res.location.lng}&zoom=12&size=600x300&maptype=roadmap&key=${process.env.MAPS_KEY}`)
                     .setColor(embedColor)
                 message.channel.send(mapMessage)
