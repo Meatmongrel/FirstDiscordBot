@@ -39,9 +39,8 @@ module.exports = {
                                 .setColor(embedColor)
                             return message.channel.send(cancelMsg)
     
-                        }else{
-                            message.reply('That is not a valid reaction')
                         }
+                        message.reply('That is not a valid reaction')
     
                     })
                     .catch(() => {

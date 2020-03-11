@@ -1,10 +1,7 @@
-'use strict';
-
 const Collection = require('../util/Collection');
 const Snowflake = require('../util/Snowflake');
 const Webhook = require('./Webhook');
-const Util = require('../util/Util');
-const PartialTypes = require('../util/Constants');
+const Invite = require('./Invite');
 
 /**
  * The target type of an entry, e.g. `GUILD`. Here are the available types:
@@ -34,7 +31,6 @@ const Targets = {
   WEBHOOK: 'WEBHOOK',
   EMOJI: 'EMOJI',
   MESSAGE: 'MESSAGE',
-  UNKNOWN: 'UNKNOWN',
 };
 
 /**
@@ -110,7 +106,8 @@ const Actions = {
  */
 class GuildAuditLogs {
   constructor(guild, data) {
-    if (data.users) for (const user of data.users) guild.client.users.add(user);
+    if (data.users) for (const user of data.users) guild.client.dataManager.newUser(user);
+
     /**
      * Cached webhooks
      * @type {Collection<Snowflake, Webhook>}
@@ -151,15 +148,14 @@ class GuildAuditLogs {
    * * An emoji
    * * An invite
    * * A webhook
-   * * An object with an id key if target was deleted
    * * An object where the keys represent either the new value or the old value
-   * @typedef {?Object|Guild|User|Role|GuildEmoji|Invite|Webhook} AuditLogEntryTarget
+   * @typedef {?Object|Guild|User|Role|Emoji|Invite|Webhook} AuditLogEntryTarget
    */
 
   /**
-   * Finds the target type from the entry action.
-   * @param {AuditLogAction} target The action target
-   * @returns {AuditLogTargetType}
+   * Find target type from entry action.
+   * @param {number} target The action target
+   * @returns {?string}
    */
   static targetType(target) {
     if (target < 10) return Targets.GUILD;
@@ -170,7 +166,7 @@ class GuildAuditLogs {
     if (target < 60) return Targets.WEBHOOK;
     if (target < 70) return Targets.EMOJI;
     if (target < 80) return Targets.MESSAGE;
-    return Targets.UNKNOWN;
+    return null;
   }
 
   /**
@@ -181,6 +177,7 @@ class GuildAuditLogs {
    * * ALL
    * @typedef {string} AuditLogActionType
    */
+
 
   /**
    * Finds the action type from the entry action.
@@ -225,17 +222,13 @@ class GuildAuditLogs {
 
     return 'ALL';
   }
-
-  toJSON() {
-    return Util.flatten(this);
-  }
 }
 
 /**
  * Audit logs entry.
  */
 class GuildAuditLogsEntry {
-  constructor(logs, guild, data) { // eslint-disable-line complexity
+  constructor(logs, guild, data) {
     const targetType = GuildAuditLogs.targetType(data.action_type);
     /**
      * The target type of this entry
@@ -250,7 +243,7 @@ class GuildAuditLogsEntry {
     this.actionType = GuildAuditLogs.actionType(data.action_type);
 
     /**
-     * Specific action type of this entry in its string presentation
+     * Specific action type of this entry in its string representation
      * @type {AuditLogAction}
      */
     this.action = Object.keys(Actions).find(k => Actions[k] === data.action_type);
@@ -265,9 +258,7 @@ class GuildAuditLogsEntry {
      * The user that executed this entry
      * @type {User}
      */
-    this.executor = guild.client.options.partials.includes(PartialTypes.USER) ?
-      guild.client.users.add({ id: data.user_id }) :
-      guild.client.users.get(data.user_id);
+    this.executor = guild.client.users.get(data.user_id);
 
     /**
      * An entry in the audit log representing a specific change.
@@ -321,23 +312,12 @@ class GuildAuditLogsEntry {
       }
     }
 
-
-    if (targetType === Targets.UNKNOWN) {
+    if ([Targets.USER, Targets.GUILD].includes(targetType)) {
       /**
        * The target of this entry
        * @type {AuditLogEntryTarget}
        */
-      this.target = this.changes.reduce((o, c) => {
-        o[c.key] = c.new || c.old;
-        return o;
-      }, {});
-      this.target.id = data.target_id;
-    } else if (targetType === Targets.USER) {
-      this.target = guild.client.options.partials.includes(PartialTypes.USER) ?
-        guild.client.users.add({ id: data.target_id }) :
-        guild.client.users.get(data.target_id);
-    } else if (targetType === Targets.GUILD) {
-      this.target = guild.client.guilds.get(data.target_id);
+      this.target = guild.client[`${targetType.toLowerCase()}s`].get(data.target_id);
     } else if (targetType === Targets.WEBHOOK) {
       this.target = logs.webhooks.get(data.target_id) ||
         new Webhook(guild.client,
@@ -349,24 +329,19 @@ class GuildAuditLogsEntry {
             guild_id: guild.id,
           }));
     } else if (targetType === Targets.INVITE) {
-      this.target = guild.members.fetch(guild.client.user.id).then(me => {
-        if (me.permissions.has('MANAGE_GUILD')) {
-          const change = this.changes.find(c => c.key === 'code');
-          return guild.fetchInvites().then(invites => {
-            this.target = invites.find(i => i.code === (change.new || change.old));
-          });
-        } else {
-          this.target = this.changes.reduce((o, c) => {
-            o[c.key] = c.new || c.old;
-            return o;
-          }, {});
-          return this.target;
-        }
+      const changes = this.changes.reduce((o, c) => {
+        o[c.key] = c.new || c.old;
+        return o;
+      }, {
+        id: data.target_id,
+        guild,
       });
+      changes.channel = { id: changes.channel_id };
+      this.target = new Invite(guild.client, changes);
     } else if (targetType === Targets.MESSAGE) {
       this.target = guild.client.users.get(data.target_id);
     } else {
-      this.target = guild[`${targetType.toLowerCase()}s`].get(data.target_id) || { id: data.target_id };
+      this.target = guild[`${targetType.toLowerCase()}s`].get(data.target_id);
     }
   }
 
@@ -380,16 +355,12 @@ class GuildAuditLogsEntry {
   }
 
   /**
-   * The time this entry was created at
+   * The time this entry was created
    * @type {Date}
    * @readonly
    */
   get createdAt() {
     return new Date(this.createdTimestamp);
-  }
-
-  toJSON() {
-    return Util.flatten(this, { createdTimestamp: true });
   }
 }
 
