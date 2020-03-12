@@ -1,4 +1,4 @@
-const { RichEmbed, Client, Collection } = require('discord.js')
+const { MessageEmbed, Client, Collection } = require('discord.js')
 const fs = require('fs')
 const fetch = require('node-fetch')
 
@@ -43,7 +43,7 @@ client.on('message', message => {
                 if(message.member.hasPermission("ADMINISTRATOR") == true){
                     return client.commands.get('prefix').execute(message, args)                
                 }
-                const currentPrefix = new RichEmbed()
+                const currentPrefix = new MessageEmbed()
                     .setTitle(`The current prefix is ${config.prefix}`)
                     .setField("You cannot change the prefix", "You do not have the administrator permissions")
                 return message.channel.send(currentPrefix)
@@ -59,4 +59,4 @@ client.on('message', message => {
         
     }
 })
-client.login(process.env.BOT_TOKEN)
+client.login('NjM4NTYyOTU5NDM3ODU2NzY4.XmaPkw.cXxDkmURGu_Qs8r6UwFXBNeLHgU')

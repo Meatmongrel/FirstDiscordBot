@@ -1,5 +1,5 @@
 const fetch = require('node-fetch')
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const embedColor = "#5b3687"
 
 module.exports = {
@@ -43,7 +43,7 @@ module.exports = {
             fetch(`https://pokeapi.co/api/v2/pokemon/${args.toLowerCase()}`)
                 .then(res => res.json())
                 .then(pokemon => {
-                    const poke = new RichEmbed()
+                    const poke = new MessageEmbed()
                         .setTitle(pokemon.name)
                         .setColor(embedColor)
                         .setImage(eval(`pokemon.sprites.front_${shiny}`))
@@ -63,7 +63,7 @@ module.exports = {
             fetch(`https://pokeapi.co/api/v2/pokemon/${num}`)
                 .then(res => res.json())
                 .then(pokemon => {
-                    const poke = new RichEmbed()
+                    const poke = new MessageEmbed()
                         .setTitle(pokemon.name)
                         .setColor(embedColor)
                         .setImage(eval(`pokemon.sprites.front_${shiny}`))
@@ -86,7 +86,7 @@ module.exports = {
                 fetchRandomPoke(message, "shiny")
             }
             else if(args[1]%1==0 === true){
-    
+                
             }
             else if(args[1]){
                 fetchPoke(message, args[1], "shiny")
