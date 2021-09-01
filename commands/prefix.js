@@ -1,5 +1,5 @@
 const embedColor = "#5b3687"
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const fs = require('fs')
 
 module.exports = {
@@ -7,7 +7,7 @@ module.exports = {
     description: "View or change the current bot prefix",
     execute(message, args){
         if (!args.length){
-            const prefixMsg = new RichEmbed()
+            const prefixMsg = new MessageEmbed()
                 .setTitle(`The current prefix is ${config.prefix}`)
                 .setColor(embedColor)
             message.channel.send(prefixMsg)
@@ -28,13 +28,13 @@ module.exports = {
                                 if (err) throw err;
                                 return config = JSON.parse(data)
                               });
-                            const prefixSuccessMsg = new RichEmbed()
+                            const prefixSuccessMsg = new MessageEmbed()
                             .setTitle(`Prefix changed to ${args[1]}`)
                             .setColor(embedColor)
                             return message.channel.send(prefixSuccessMsg)
     
                         }else if (reaction.emoji.name === '👎') {
-                            const cancelMsg = new RichEmbed()
+                            const cancelMsg = new MessageEmbed()
                                 .setTitle("Prefix change cancelled")
                                 .setColor(embedColor)
                             return message.channel.send(cancelMsg)
@@ -44,7 +44,7 @@ module.exports = {
     
                     })
                     .catch(() => {
-                        const timeMsg = new RichEmbed()
+                        const timeMsg = new MessageEmbed()
                             .setTitle('You did not respond in time')
                             .setColor(embedColor)
                         return message.channel.send(timeMsg)

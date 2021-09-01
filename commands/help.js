@@ -1,5 +1,5 @@
 const embedColor = "#5b3687"
-const { RichEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const fs = require('fs')
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
             if (err) throw err;
             return config = JSON.parse(data)
         });
-        const helpMsg = new RichEmbed()
+        const helpMsg = new MessageEmbed()
             .setColor(embedColor)
             .setTitle(`The prefix is ${config.prefix} and current commands are:`)
             .addField(`${config.prefix}d (num)`, "Roll a die with (num) sides")
